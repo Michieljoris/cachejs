@@ -2,17 +2,14 @@
 /*jshint strict:false unused:true smarttabs:true eqeqeq:true immed: true undef:true*/
 /*jshint maxparams:7 maxcomplexity:8 maxlen:150 devel:true newcap:false*/ 
 
-//simple LRU implementation using arrays:
-// http://www.senchalabs.org/connect/staticCache.html
+//LRU cache implementation using doubly linked lists:
 
-//lru implementation using doubly linked lists:
-
-//TODO remove large entries over a certain threshold before lru
+//TODO filter out large entries over a certain threshold to make room
+//for lots of small values
 //TODO keep a value in cache no matter what if its flag is set
-//TODO replace linked empty slots trick with just a list of indexes of empty slots.
-//TODO maintain 2 LRUs in one cache for ARC purposes. Move the lru of the top list to resize both 
-//TODO write more tests
-//TODO remove 'put', but pass function into get to get value if there's a cache miss.
+
+//For a simple LRU implementation using arrays see lru_cache_simple in
+//this repo, copied from connect middleware staticCache.
 
 
 function getCache(someMaxLen, someMaxSize){
@@ -64,9 +61,13 @@ function getCache(someMaxLen, someMaxSize){
     }
 
     //only difference with 'has()' it that this will touch the value:
-    function get(key){
+    function get(key, func){
         var index = lookup[key];
-        if (index === undefined) return undefined;
+        if (index === undefined) {
+            if (typeof func === 'function')
+                return put(key, func());
+            else return undefined;
+        }
         var val = cache[index];
         touch(index, val);
         return val;
@@ -74,7 +75,7 @@ function getCache(someMaxLen, someMaxSize){
 
 
     function put(key, val, size){
-        if (size > maxSize) return;
+        if (size > maxSize) return val;
         var emptySlot = lookup[key];
         //update the value if already present in cache, this shouldn't
         //be the way to use the cache. You should (partially) flush
@@ -94,12 +95,18 @@ function getCache(someMaxLen, someMaxSize){
             //index points at the end of the cache:
             emptySlot = cache.length;
             //if we have room still just add it to the cache:
-            if (emptySlot < maxLen) cache.push(val);
+            if (emptySlot < maxLen) {
+                cache.push(val);   
+                length++;
+            }
             else {
-                var lruVal = cache[lru];
-                emptySlot = emptySlots.pop();
+                if (emptySlots.length)  {
+                    emptySlot = emptySlots.pop();
+                    length++;
+                } 
                 //if there were no empty slots then..
-                if (emptySlot === undefined) {
+                else {
+                    var lruVal = cache[lru];
                     //we need to drop the lru to make room for our new value:
                     delete lookup[lruVal.key];
                     //emptySlot is now pointing to the old lru
@@ -111,12 +118,12 @@ function getCache(someMaxLen, someMaxSize){
                     //if there was anything below lru point it up to the new lru:
                     if (lruVal.prev !== undefined) cache[lruVal.prev].next = lru;
                 }
+                //we found an empty slot so we need to incr the len of the cache
                 //assign the value to the empty slot:
                 cache[emptySlot] = val;
             }
-            //if the cache is empty there is no mru and there is
-            //nothing to do:
-            if (mru === -1) ;
+            //if this is the only item it will be linked in between lru and mru
+            if (length === 1) lru = emptySlot;
             else {
                 //point down to the old mru:
                 val.prev = mru;
@@ -127,7 +134,7 @@ function getCache(someMaxLen, someMaxSize){
             //our new value:
             lookup[key] = mru = emptySlot;
         }
-        length++;
+        return val;
     }
 
     function del(key) {
@@ -175,7 +182,7 @@ function getCache(someMaxLen, someMaxSize){
     function flush(){
         lookup = {};
         cache = [];
-        mru = -1, lru = 0;
+        mru = 0, lru = 0;
         emptySlots = [];
     }
 
@@ -189,7 +196,7 @@ function getCache(someMaxLen, someMaxSize){
         regExp = regExp || /.*/;
         var result = [];
         var prev = mru;
-        if (prev === -1) return [];
+        if (!length) return [];
         var i=0;
         while (i < maxLen) {
             var entry = cache[prev];
@@ -229,6 +236,7 @@ function getCache(someMaxLen, someMaxSize){
         // length--;
         // return key;
         // or:
+        if (!length) return undefined;
         var val = cache[lru];
         return del(val.key);
     }
@@ -237,7 +245,11 @@ function getCache(someMaxLen, someMaxSize){
     
     return {
         has: has, //calling this has no bearing on LRU ordering
-        get: get, //if the value is in the cache it will go to the top of the list
+        get: get, //if the value is in the cache it will go to the top
+                  //of the list, if not it will return undefined,
+                  //unless a function has been passed in as the 2nd
+                  //arg. It will then return the value returnd by that
+                  //function, and add that value to the cache.
         put: put, //an assumed miss, not an update, though it will
                   //update the value if it is found in the cache. In
                   //both cases the value will be put at the top of the
@@ -252,8 +264,8 @@ function getCache(someMaxLen, someMaxSize){
                       //every put call or every value stored is in
                       //string form
         //api for ARC-cache:
-        delLru: delLru,
-        length: function() { return length; }
+        delLru: delLru, //deletes the lru from the cache
+        length: function() { return length; } //returns the actual number of values in the cache
     };
 }
 
