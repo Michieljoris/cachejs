@@ -97,14 +97,9 @@ function getCache(someMaxLen, someMaxSize){
             if (emptySlot < maxLen) cache.push(val);
             else {
                 var lruVal = cache[lru];
-                //let emptySlot point to whatever's below lru:
-                emptySlot = lruVal.prev;
-                //see if it exists:
-                if (emptySlot !== undefined) {
-                    //yes we have an empty slot we can use, lets splice it out:
-                    lruVal.prev = cache[emptySlot].prev;
-                }
-                else {
+                emptySlot = emptySlots.pop();
+                //if there were no empty slots then..
+                if (emptySlot === undefined) {
                     //we need to drop the lru to make room for our new value:
                     delete lookup[lruVal.key];
                     //emptySlot is now pointing to the old lru
@@ -113,9 +108,9 @@ function getCache(someMaxLen, someMaxSize){
                     lru = lruVal.next;
                     //point the new lru to whatever was hangin off the old mru:
                     cache[lru].prev = lruVal.prev;
+                    //if there was anything below lru point it up to the new lru:
+                    if (lruVal.prev !== undefined) cache[lruVal.prev].next = lru;
                 }
-                //if there was anything below lru point it up to the new lru:
-                if (lruVal.prev !== undefined) cache[lruVal.prev].next = lru;
                 //assign the value to the empty slot:
                 cache[emptySlot] = val;
             }
@@ -150,19 +145,8 @@ function getCache(someMaxLen, someMaxSize){
         //if this happened to be the lru, the penultimate value in the
         //list becomes lru
         if (lru === index) lru = deletedValue.next;
-        //since we have now an open slot in the cache, let's splice it
-        //into the list just below lru and whatever other empty slots
-        //are hanging from the bottom, so we can find these slots
-        //again if we need them
-        var lruVal = cache[lru];
-        //our deletedValue needs to point to the tail:
-        deletedValue.prev = lruVal.prev;
-        //and lru value needs to point to our deleted value
-        lruVal.prev = index;
-        //and the other way as well, up the list from deleted value:
-        deletedValue.next = lru;
-        //and up from whatever is hanging below the deleted value now:
-        if (deletedValue.prev) cache[deletedValue.prev].next = index;
+        //keep track of empty slots:
+        emptySlots.push(index);
         //one less value in the cache:
         length--;
         //be polite and return the key:
