@@ -8,16 +8,22 @@
 //for lots of small values
 //TODO keep a value in cache no matter what if its flag is set
 
-//TODO maintain 2 LRUs in one cache for ARC purposes. Move the lru of the top list to resize both 
+//TODO maintain 2 LRUs in one cache for ARC purposes. Move the lru of
+//the top list to resize both
+
+//TODO replace lru and mru with psuedo entries in the cache. they just
+//are not in lookup, you wouldn't have to check for undefined in
+//bridge
+
+//TODO change cache index to start from 1, you can then drop checking
+//for undefined, or maybe with lru and mru added to linkded list it's
+//not necessary?
 
 //For a simple LRU implementation using arrays see lru_cache_simple in
 //this repo, copied from connect middleware staticCache.
 
 
-var emptySlots;
-var cache;
-
-function getCache(someMaxLen, someMaxSize){
+function getCache(someMaxLen, someMaxSize, cache, emptySlots){
     
     var lookup;
     var mru, lru;
@@ -29,9 +35,12 @@ function getCache(someMaxLen, someMaxSize){
 
     //make the neighbours of a value point to eachother, cutting the
     //value itself out of the list:
-    function bridge(val) {
+    function bridge(index, val) {
         var prev = val.prev;
         var next = val.next;
+        //if we're cutting out the last one in the list lru will have
+        //to point at the next one up
+        if (index === lru) lru = val.next;
         //the neighbour below has to point to the neighbour above:
         if (prev !== undefined) cache[prev].next = next;
         //and the neighbour above to the neighbour below:
@@ -42,19 +51,20 @@ function getCache(someMaxLen, someMaxSize){
     }
 
     //move the value to the top of the list:
-    function touch(index, val) {
+    function touch(touching, val) {
         //nothing to do:
-        if (index === mru) return;
-        bridge(val);
-        //if we're cutting out the last one in the list lru will have
-        //to point at the next one up
-        if (index === lru) lru = val.next;
-        //point to the old mru:
+        if (touching === mru) return;
+        //
+        bridge(touching, val);
+        //point down to the old mru:
         val.prev = mru;
-        //there is no next, it's the mru now:
-        delete val.next;
+        //point up to whatever was above mru
+        val.next = cache[mru].next;
+        //and point back:
+        console.log('touching', touching);
+        if (val.next) cache[val.next].prev = touching;
         //the old mru has to point up the new one:
-        cache[mru].next = mru = index;
+        cache[mru].next = mru = touching;
     }
     
     function has(key){
@@ -95,7 +105,7 @@ function getCache(someMaxLen, someMaxSize){
                 val: val,
                 size: size || val.length || 0
             };
-            //index points at the end of the cache:
+            //emptySlot points at the end of the cache:
             emptySlot = cache.length;
             //if we have room still just add it to the cache:
             if (emptySlot < maxLen) {
@@ -114,12 +124,8 @@ function getCache(someMaxLen, someMaxSize){
                     delete lookup[lruVal.key];
                     //emptySlot is now pointing to the old lru
                     emptySlot = lru;
-                    //point lru at the next one up:
-                    lru = lruVal.next;
-                    //point the new lru to whatever was hangin off the old mru:
-                    cache[lru].prev = lruVal.prev;
-                    //if there was anything below lru point it up to the new lru:
-                    if (lruVal.prev !== undefined) cache[lruVal.prev].next = lru;
+                    //cut lru out of the list:
+                    bridge(emptySlot, lruVal);
                 }
                 //we found an empty slot so we need to incr the len of the cache
                 //assign the value to the empty slot:
@@ -130,8 +136,17 @@ function getCache(someMaxLen, someMaxSize){
             else {
                 //point down to the old mru:
                 val.prev = mru;
+                // if (mru === undefined) val.prev = 0;
+                var anchor = cache[mru].next;
+                val.next = anchor;
+                if (anchor !== undefined) {
+                    cache[anchor].prev = emptySlot;  
+                }
+                // else val.next = 1
                 //and the old mru can point up to the new value:
                 cache[mru].next = emptySlot;
+                
+                
             }
             //look up values by key in a hashtable, and point mru at
             //our new value:
@@ -141,6 +156,10 @@ function getCache(someMaxLen, someMaxSize){
     }
 
     function del(key) {
+        if (length === 1) {
+            console.log('You should flush it. Deleting the last value would break the link in a double lru between top and bottom');
+            return undefined;;
+        }
         var index = lookup[key];
         //if value is not present in cache we're done:
         if (index === undefined) return undefined;
@@ -149,12 +168,9 @@ function getCache(someMaxLen, someMaxSize){
         var deletedValue = cache[index];
         //delete the value itself:
         delete deletedValue.val;
-        //fix up the dbly linked list 
+        //fix up the dbly linked list now:
         //break its links and bridge the gap: 
-        bridge(deletedValue);
-        //if this happened to be the lru, the penultimate value in the
-        //list becomes lru
-        if (lru === index) lru = deletedValue.next;
+        bridge(index, deletedValue);
         //keep track of empty slots:
         emptySlots.push(index);
         //one less value in the cache:
@@ -184,11 +200,22 @@ function getCache(someMaxLen, someMaxSize){
 
     function flush(){
         lookup = {};
-        cache = [];
+        // cache = [];
         mru = 0, lru = 0;
-        emptySlots = [];
+        // emptySlots = [];
     }
 
+    // function mru(index) {
+    //     if (index !== undefined) cache[1].prev = index;
+    //     else return cache[1].prev;
+    //     return undefined; 
+    // }
+    // function lru(index) {
+    //     if (index !== undefined) cache[0].next = index;
+    //     else return cache[0].next;
+    //     return undefined; 
+    // }
+    
     //return a list ordered by mru, filtered by the regexp if passed
     //in:
     function list(regExp){
@@ -243,6 +270,11 @@ function getCache(someMaxLen, someMaxSize){
         var val = cache[lru];
         return del(val.key);
     }
+    
+    function link(otherMru) {
+        cache[otherMru].next = lru;
+        cache[lru].prev = otherMru;
+    }
 
     flush();
     
@@ -269,6 +301,9 @@ function getCache(someMaxLen, someMaxSize){
         //api for ARC-cache:
         delLru: delLru, //deletes the lru from the cache
         length: function() { return length; } //returns the actual number of values in the cache
+        ,mru: function() { return mru; }
+        ,lru: function() { return lru; }
+        ,link: link
     };
 }
 
