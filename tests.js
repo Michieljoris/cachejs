@@ -19,20 +19,18 @@ t.put('tc','tc'); assert(t, 'tc,tb,ta',3);
 b.put('bc','bc'); assert(b, 'bc,bb,ba',3);
 // listdown();
 // t.get('ta');
-listup();
-listdown();
+// listup();
+// listdown();
 // t.get('tc');
-console.log('getting bb:');
-b.get('bb');
-console.log(cache);
-listup();
+b.get('ba');
 links();
+listup();
 listdown();
 // listdown();
 
 // assert(b, 'bc,bb,ba',3);
 
-// testSingle();
+testSingle();
 function testSingle() {
     var c = getCache(5, 10, [], []);
     
@@ -57,9 +55,9 @@ function testSingle() {
     c.del('f'); assert(c,'c,h',2);
     c.del('z'); assert(c,'c,h',2);
     c.del('c'); assert(c,'h',1);
-    c.del('h'); assert(c,'', 0);
-
-
+    
+    c = getCache(5, 10, [], []);
+    // c.del('h'); assert(c,'', 0);
     c.put('a', 'a'); assert(c,'a',1);
     c.get('a'); assert(c,'a',1);
     c.put('b', 'b'); assert(c,'b,a',2);
@@ -77,8 +75,8 @@ function testSingle() {
     c.delLru(); assert(c,'g,f,d', 3);
     c.delLru(); assert(c,'g,f', 2);
     c.delLru(); assert(c,'g', 1);
-    c.delLru(); assert(c,'', 0);
-    c.delLru(); assert(c,'', 0);
+    // c.delLru(); assert(c,'', 0);
+    // c.delLru(); assert(c,'', 0);
 }
 
 function listdown(){
@@ -92,7 +90,6 @@ function listdown(){
     var i=0;
     while (i < t.length() + b.length()) {
         var entry = cache[prev];
-        console.log(entry.key);
         result.push(entry.key);
         i++;
         prev = entry.prev;

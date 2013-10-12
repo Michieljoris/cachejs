@@ -21,6 +21,9 @@
 // The following is adapted from the javascript and python versions, which
 // both seem to have been adapted from the original c version
 
+
+//TODO creating new values is async very likely!!!, does algo rely on sync?
+
 var cache = require('./lru_cache');
 
 var c = 10;

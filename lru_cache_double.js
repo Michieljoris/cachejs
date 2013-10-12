@@ -18,7 +18,7 @@
 //TODO change cache index to start from 1, you can then drop checking
 //for undefined, or maybe with lru and mru added to linkded list it's
 //not necessary?
-
+//TODO have more than 2 LRUs?
 //For a simple LRU implementation using arrays see lru_cache_simple in
 //this repo, copied from connect middleware staticCache.
 
@@ -61,8 +61,7 @@ function getCache(someMaxLen, someMaxSize, cache, emptySlots){
         //point up to whatever was above mru
         val.next = cache[mru].next;
         //and point back:
-        console.log('touching', touching);
-        if (val.next) cache[val.next].prev = touching;
+        if (val.next !== undefined) cache[val.next].prev = touching;
         //the old mru has to point up the new one:
         cache[mru].next = mru = touching;
     }
