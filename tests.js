@@ -1,38 +1,38 @@
-var getCache = require('./lru_cache_double');
+var getCache = require('./lru_cache_multiple');
 // var getCache = require('./lru_cache');
 
-var cache = [], emptySlots = {};
+var cache = [], emptySlots = [], lookup = {};
 var maxLen = 20; //should be even
-var t = getCache(maxLen/2, 10, cache, emptySlots);
-var b = getCache(maxLen/2, 10, cache, emptySlots);
+var t = getCache(maxLen/2, 10, cache, emptySlots, lookup, 0);
+var b = getCache(maxLen/2, 10, cache, emptySlots, lookup, 1);
 
 var failed = 0;
 var count = 0;
 
 t.put('ta','ta'); assert(t, 'ta',1);
+// console.log(cache);
+// links();
 b.put('ba','ba'); assert(b, 'ba',1);
-t.link(b.mru());assert(b, 'ba',1);
+// t.link(b.mru());assert(b, 'ba',1);
 
 t.put('tb','tb'); assert(t, 'tb,ta',2);
+// listdown();
 b.put('bb','bb'); assert(b, 'bb,ba',2);
+
 t.put('tc','tc'); assert(t, 'tc,tb,ta',3);
 b.put('bc','bc'); assert(b, 'bc,bb,ba',3);
 // listdown();
-// t.get('ta');
-// listup();
-// listdown();
-// t.get('tc');
+t.get('ta');
+listdown(t);
+listdown(b);
+listup(t);
+listup(b);
+t.get('tc');
 b.get('ba');
-links();
-listup();
-listdown();
-// listdown();
-
-// assert(b, 'bc,bb,ba',3);
 
 testSingle();
 function testSingle() {
-    var c = getCache(5, 10, [], []);
+    var c = getCache(5, 10, [], [], {}, 0);
     
     c.put('a', 'a'); assert(c,'a',1);
     c.get('a'); assert(c,'a',1);
@@ -55,9 +55,7 @@ function testSingle() {
     c.del('f'); assert(c,'c,h',2);
     c.del('z'); assert(c,'c,h',2);
     c.del('c'); assert(c,'h',1);
-    
-    c = getCache(5, 10, [], []);
-    // c.del('h'); assert(c,'', 0);
+    c.del('h'); assert(c,'',0);
     c.put('a', 'a'); assert(c,'a',1);
     c.get('a'); assert(c,'a',1);
     c.put('b', 'b'); assert(c,'b,a',2);
@@ -75,20 +73,21 @@ function testSingle() {
     c.delLru(); assert(c,'g,f,d', 3);
     c.delLru(); assert(c,'g,f', 2);
     c.delLru(); assert(c,'g', 1);
-    // c.delLru(); assert(c,'', 0);
-    // c.delLru(); assert(c,'', 0);
+    c.delLru(); assert(c,'', 0);
+    c.delLru(); assert(c,'', 0);
 }
 
-function listdown(){
+function listdown(list){
     // console.log('lru', lru);
     // console.log('mru', mru);
     // console.log(lookup);
     // console.log(cache);
     var result = [];
-    var prev = t.mru();
+    var prev = list.mru();
     // if (!length) return [];
     var i=0;
-    while (i < t.length() + b.length()) {
+    while (i < list.length()) {
+        // console.log(i, t.length(), b.length());
         var entry = cache[prev];
         result.push(entry.key);
         i++;
@@ -98,16 +97,16 @@ function listdown(){
     return result;
 }
 
-function listup(){
+function listup(list){
     // console.log('lru', lru);
     // console.log('mru', mru);
     // console.log(lookup);
     // console.log(cache);
     var result = [];
-    var next = b.lru();
+    var next = list.lru();
     // if (!length) return [];
     var i=0;
-    while (i < t.length() + b.length()) {
+    while (i < list.length()) {
         var entry = cache[next];
         result.push(entry.key);
         i++;

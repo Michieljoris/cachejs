@@ -24,7 +24,7 @@
 
 //TODO creating new values is async very likely!!!, does algo rely on sync?
 
-var cache = require('./lru_cache');
+var cache = require('./lru_cache_multiple');
 
 var c = 10;
 //We're passing in max sizes for the cache, but this is managed in this module
