@@ -57,7 +57,7 @@ function getCache(someMaxLen, someMaxSize){
     function has(key){
         var index = lookup[key];
         if (index === undefined) return undefined;
-        return cache[index];
+        return cache[index].val;
     }
 
     //only difference with 'has()' it that this will touch the value:
@@ -70,7 +70,7 @@ function getCache(someMaxLen, someMaxSize){
         }
         var val = cache[index];
         touch(index, val);
-        return val;
+        return val.val;
     }
 
 
@@ -166,7 +166,7 @@ function getCache(someMaxLen, someMaxSize){
     }
     
     //str, array, or regexp, will call del to do the work:
-    function delWrapper(keys){
+    function remove(keys){
         if (!keys) return;
         if (Typeof(keys) === 'RegExp') {
             keys = Object.keys(lookup).filter(function(k) {
@@ -179,11 +179,12 @@ function getCache(someMaxLen, someMaxSize){
         });
     }
 
-    function flush(){
+    function init(){
         lookup = {};
         cache = [];
         mru = 0, lru = 0;
         emptySlots = [];
+        length = 0;
     }
 
     //return a list ordered by mru, filtered by the regexp if passed
@@ -219,29 +220,7 @@ function getCache(someMaxLen, someMaxSize){
         };
     }
     
-    function delLru() {
-        // var index = lru;
-        // var val = cache[index];
-        // var key = val.key;
-        // delete lookup[key];
-        // // val.deleted = true;
-        // // delete val.key;
-        // delete val.val;
-        // bridge(val);
-        // var lruVal = cache[lru];
-        // val.prev = lruVal.prev;
-        // lruVal.prev = index;
-        // val.next = lru;
-        // if (val.prev) cache[val.prev].next = index;
-        // length--;
-        // return key;
-        // or:
-        if (!length) return undefined;
-        var val = cache[lru];
-        return del(val.key);
-    }
-
-    flush();
+    init();
     
     return {
         has: has, //calling this has no bearing on LRU ordering
@@ -254,17 +233,17 @@ function getCache(someMaxLen, someMaxSize){
                   //update the value if it is found in the cache. In
                   //both cases the value will be put at the top of the
                   //list.
-        del: delWrapper, //convenience wrapper to selectively flush
+        del: del,
+        remove: remove, //convenience wrapper to selectively flush
                          //the cache by key, [keys] or /key/
-        flush: flush, //completely empty out the cache
+        flush: init, //completely empty out the cache
         list: list, //return a list of the cache contents, filtered by
                     //a regexp if passed in
         stats: stats, //return len and size of of cache. size will
                       //only be accurate if a size param is present in
                       //every put call or every value stored is in
                       //string form
-        //api for ARC-cache:
-        delLru: delLru, //deletes the lru from the cache
+        
         length: function() { return length; } //returns the actual number of values in the cache
     };
 }
@@ -272,3 +251,25 @@ function getCache(someMaxLen, someMaxSize){
 //pass in max of items stored in cache and max size per item,
 //defaulting to 128 and 256kb respectively
 module.exports = getCache;
+
+var cache = getCache(3);
+cache.put('a', 'a');
+cache.put('b', 'b');
+cache.put('c', 'c');
+console.log(cache.stats());
+console.log(cache.list());
+console.log(cache.has('b'));
+console.log(cache.list());
+console.log(cache.get('a'));
+console.log(cache.list());
+console.log(cache.del('a'));
+console.log(cache.list());
+cache.put('d', 'd');
+console.log(cache.list());
+cache.put('e', 'e');
+console.log(cache.list());
+cache.remove(['d', 'e']);
+console.log(cache.list());
+cache.flush();
+console.log(cache.list());
+

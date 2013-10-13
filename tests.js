@@ -2,63 +2,69 @@
 /*jshint strict:false unused:true smarttabs:true eqeqeq:true immed: true undef:true*/
 /*jshint maxparams:7 maxcomplexity:8 maxlen:150 devel:true newcap:false*/ 
 
-var getCache = require('./lru_cache_multiple');
-// var getCache = require('./lru_cache');
-
-var store = [], emptySlots = [], lookup = {};
-var maxLen = 20; //should be even
-var t = getCache(maxLen/2, store, emptySlots, lookup);
-var b = getCache(maxLen/2, store, emptySlots, lookup);
+var getArcCache = require('./arc_cache');
+var getLruCache = require('./lru_cache_multiple');
 
 var failed = 0;
 var count = 0;
+test(getArcCache);
+test(getLruCache);
 
-//async cache:
-var a = getCache(maxLen/2, store, emptySlots, lookup);
+function test(getCache) {
+    
+    var store = [], emptySlots = [], lookup = {};
+    var maxLen = 20; //should be even
 
-a.cache('a', function(val) {
-    console.log('received value first:', val);
-    assert(a, 'a', 1);
-});
 
-a.cache('a', function(val) {
-    console.log('received value second:', val);
-    assert(a, 'a', 1);
-});
-a.cache('a', 'a'); 
+    //async cache:
+    var a = getCache(maxLen/2, store, emptySlots, lookup);
 
-a.cache('a', function(val) {
-    console.log('received value third:', val);
-    assert(a, 'a', 1);
-});
+    a.cache('a', function(val) {
+        console.log('received value first:', val);
+        assert(a, 'a', 1);
+    });
 
-a.cache('b', function(val) {
-    console.log('received value for b:', val);
+    a.cache('a', function(val) {
+        console.log('received value second:', val);
+        assert(a, 'a', 1);
+    });
+    a.cache('a', 'a'); 
+
+    a.cache('a', function(val) {
+        console.log('received value third:', val);
+        assert(a, 'a', 1);
+    });
+
+    a.cache('b', function(val) {
+        console.log('received value for b:', val);
+        assert(a, 'b,a', 2);
+    });
+
+    a.cache('b', 'b'); 
+
     assert(a, 'b,a', 2);
-});
 
-a.cache('b', 'b'); 
+    //sync cache:
+    var t = getCache(maxLen/2, store, emptySlots, lookup);
+    var b = getCache(maxLen/2, store, emptySlots, lookup);
 
-assert(a, 'b,a', 2);
+    t.put('ta','ta'); assert(t, 'ta',1);
+    b.put('ba','ba'); assert(b, 'ba',1);
 
-//sync cache:
-t.put('ta','ta'); assert(t, 'ta',1);
-b.put('ba','ba'); assert(b, 'ba',1);
+    t.put('tb','tb'); assert(t, 'tb,ta',2);
+    b.put('bb','bb'); assert(b, 'bb,ba',2);
 
-t.put('tb','tb'); assert(t, 'tb,ta',2);
-b.put('bb','bb'); assert(b, 'bb,ba',2);
+    t.put('tc','tc'); assert(t, 'tc,tb,ta',3);
+    b.put('bc','bc'); assert(b, 'bc,bb,ba',3);
 
-t.put('tc','tc'); assert(t, 'tc,tb,ta',3);
-b.put('bc','bc'); assert(b, 'bc,bb,ba',3);
+    t.get('ta'); assert(t, 'ta,tc,tb', 3);
+    b.get('ba'); assert(b, 'ba,bc,bb', 3);
 
-t.get('ta'); assert(t, 'ta,tc,tb', 3);
-b.get('ba'); assert(b, 'ba,bc,bb', 3);
+    // listdown(t);
+    // listdown(b);
 
-listdown(t);
-listdown(b);
-
-testSingle();
-function testSingle() {
+    // testSingle();
+    // function testSingle() {
     var c = getCache(5, [], [], {});
     
     c.put('a', 'a'); assert(c,'a',1);
@@ -102,58 +108,61 @@ function testSingle() {
     c.delLru(); assert(c,'g', 1);
     c.delLru(); assert(c,'', 0);
     c.delLru(); assert(c,'', 0);
-}
+    // }
+    
 
-function listdown(list){
-    // console.log('lru', lru);
-    // console.log('mru', mru);
-    // console.log(lookup);
-    // console.log(cache);
-    var result = [];
-    var prev = list.mru();
-    // if (!length) return [];
-    var i=0;
-    while (i < list.length()) {
-        // console.log(i, t.length(), b.length());
-        var entry = store[prev];
-        result.push(entry.key);
-        i++;
-        prev = entry.prev;
+
+    function listdown(list){
+        // console.log('lru', lru);
+        // console.log('mru', mru);
+        // console.log(lookup);
+        // console.log(cache);
+        var result = [];
+        var prev = list.mru();
+        // if (!length) return [];
+        var i=0;
+        while (i < list.length()) {
+            // console.log(i, t.length(), b.length());
+            var entry = store[prev];
+            result.push(entry.key);
+            i++;
+            prev = entry.prev;
+        }
+        console.log(result);
+        return result;
     }
-    console.log(result);
-    return result;
-}
 
-function listup(list){
-    // console.log('lru', lru);
-    // console.log('mru', mru);
-    // console.log(lookup);
-    // console.log(cache);
-    var result = [];
-    var next = list.lru();
-    // if (!length) return [];
-    var i=0;
-    while (i < list.length()) {
-        var entry = store[next];
-        result.push(entry.key);
-        i++;
-        next = entry.next;
+    function listup(list){
+        // console.log('lru', lru);
+        // console.log('mru', mru);
+        // console.log(lookup);
+        // console.log(cache);
+        var result = [];
+        var next = list.lru();
+        // if (!length) return [];
+        var i=0;
+        while (i < list.length()) {
+            var entry = store[next];
+            result.push(entry.key);
+            i++;
+            next = entry.next;
+        }
+        console.log(result);
+        return result;
     }
-    console.log(result);
-    return result;
-}
 
-function links() {
-    var i=0;
-    Object.keys(store).forEach(function(c) {
-        c = store[c];
-        console.log(i + ': ' + c.key + ' ' + (c.next !== undefined ? c.next + '<' : '|') + ' ' +
-                    (c.prev !== undefined ? '>' + c.prev : '|'));
-        i++;
-    });
-    console.log('------------------');
+    function links() {
+        var i=0;
+        Object.keys(store).forEach(function(c) {
+            c = store[c];
+            console.log(i + ': ' + c.key + ' ' + (c.next !== undefined ? c.next + '<' : '|') + ' ' +
+                        (c.prev !== undefined ? '>' + c.prev : '|'));
+            i++;
+        });
+        console.log('------------------');
+    }
+    
 }
-
 function assert(c, str, len) {
     count++;
     if (c.length() !== len) {
@@ -168,3 +177,4 @@ function assert(c, str, len) {
 }
 
 console.log('\nPerformed ' + count + ' tests. Failed ' + failed + '.');
+    

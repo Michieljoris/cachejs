@@ -16,6 +16,12 @@
 //For a simple LRU implementation using arrays see lru_cache_simple in
 //this repo, copied from connect middleware staticCache.
 
+//For a basic single LRU using dbly linked lists see lru_cache.js
+
+//This version lets you share the same store, emptyslots and lookup
+//with server arrays, mainly useful for arch_cache.js. It also lets
+//you call the cache asynchronously. Its api is interchangeable with
+//arc_cache.js
 
 function getCache(maxLen, store, emptySlots, lookup){
     
@@ -325,24 +331,27 @@ function getCache(maxLen, store, emptySlots, lookup){
     init();
     
     return {
+        //async:
         cache: cache, //an assumed miss, not an update, though it will
-        //update the value if it is found in the cache. In
-        //both cases the value will be put at the top of the
-        //list.
-        remove: remove, //convenience wrapper to selectively flush
-        //the cache by key, [keys] or /key/
+                      //update the value if it is found in the
+                      //cache. In //both cases the value will be put
+                      //at the top of the list.
+        //sync:
+        has: function(key) { return lookup[key]; },
+        get: get,
+        put: cache,
+        del: del,
+        remove: remove, //convenience wrapper to selectively flush the
+                        //cache by key, [keys] or /key/
         flush: flush, //completely empty out the cache
         list: list, //return a list of the cache contents, filtered by
-        //a regexp if passed in
+                    //a regexp if passed in
         stats: stats, //return len and size of of cache. size will
-        //only be accurate if a size param is present in
-        //every put call or every value stored is in
-        //string form
+                      //only be accurate if a size param is present in
+                      //every put call or every value stored is in
+                      //string form
         length: function() { return length; }, //returns the actual number of values in the cache
-        put: cache,
-        get: get,
-        del: del,
-        has: function(key) { return lookup[key]; },
+        
         //api for ARC-cache:
         delLru: delLru //deletes the lru from the cache
         ,mru: function() { return mru.prev; }
@@ -353,5 +362,5 @@ function getCache(maxLen, store, emptySlots, lookup){
     };
 }
 
-//getCache(maxLen (128), cache ([]), emptySlots ([]), lookup ({}))
+//getCache(maxLen (128), store ([]), emptySlots ([]), lookup ({}))
 module.exports = getCache;
