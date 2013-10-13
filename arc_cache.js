@@ -21,7 +21,7 @@
 // The following is adapted from the javascript and python versions, which
 // both seem to have been adapted from the original c version
 
-var getCache = require('./lru_cache_multiple');
+var getLruCache = require('./lru_cache');
 
 function getCache(len) {
 
@@ -47,10 +47,10 @@ function getCache(len) {
         store = [];
         emptySlots = [];
         //each cache can grow up to size c:
-        t1 = getCache(c, undefined, store, emptySlots);
-        b1 = getCache(c, undefined, store, emptySlots);
-        t2 = getCache(c, undefined, store, emptySlots);
-        b2 = getCache(c, undefined, store, emptySlots);
+        t1 = getLruCache(c, store, emptySlots);
+        b1 = getLruCache(c, store, emptySlots);
+        t2 = getLruCache(c, store, emptySlots);
+        b2 = getLruCache(c, store, emptySlots);
         p = 0; //0<p<c
     }
 
@@ -169,7 +169,7 @@ function getCache(len) {
         t1.put(key, value, size); //t1++
         //bit of a hack, should modify the bit above:
         if (requesters[key]) 
-            t2.put(key, t1.elide(key).val); //t2++ t1--
+            t2.put(key, t1.elide(key).val, size); //t2++ t1--
     } 
     
 
@@ -232,7 +232,7 @@ function getCache(len) {
         flush: init,
         list: list,
         stats: stats,
-        length: function() { return t1.length() + t2.length; }
+        length: function() { return t1.length() + t2.length(); }
     };
 }
 
