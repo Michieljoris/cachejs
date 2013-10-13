@@ -80,6 +80,7 @@ function getCache(len) {
             //t1. Let's remove the value from t1 and put it at the top of
             //t2, which is where we're keeping track of values requested at
             //least twice from this cache.
+            //TODO do this better, rewire directly:
             cb(t2.put(key, t1.elide(key).val)); //t2++ t1--
         }
         else if (t2.has(key)) {
@@ -98,6 +99,7 @@ function getCache(len) {
     }
     
     function ghostCache(key, value, size) {
+        // console.log('ghost?');
         //The key might be in the one hit ghostcache (b1), if so we move
         //it to the multiple hit cache. So b1-- and t2++
         if (b1.has(key)) {
@@ -168,7 +170,9 @@ function getCache(len) {
         } 
         t1.put(key, value, size); //t1++
         //bit of a hack, should modify the bit above:
-        if (requesters[key]) 
+        if (requesters[key] && requesters[key].length > 1) 
+            //TODO do this better, don't elide, but get the index,
+            //then rewire this into the mru pos
             t2.put(key, t1.elide(key).val, size); //t2++ t1--
     } 
     
@@ -215,6 +219,11 @@ function getCache(len) {
         return t1.list(regExp).concat(t2.list(regExp));
     }
     
+    function debug(regExp) {
+        return ['t1:', t1.list(regExp), 't2:', t2.list(regExp), 'b1:', b1.list(regExp), 'b2:', b2.list(regExp)];
+    }
+    
+    
     function stats() {
         var one = t1.stats();
         var two = t2.stats();
@@ -232,6 +241,7 @@ function getCache(len) {
         flush: init,
         list: list,
         stats: stats,
+        debug: debug,
         length: function() { return t1.length() + t2.length(); }
     };
 }

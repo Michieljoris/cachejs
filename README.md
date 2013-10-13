@@ -6,11 +6,11 @@ Implementation of both LRU and ARC cache.
 Require either arc_cache or lru_cache. Their api is the same for
 standard use.
 
-    var cache = require('arc_cache')();
+    var cache = require('path/to/arc_cache')();
 	
 or 	
 	
-    var cache = require('lru_cache')();
+    var cache = require('path/to/lru_cache')();
 
 Before retrieving a value from disk or from a server or calculating it:
 
@@ -40,10 +40,10 @@ make sure to always call cache with the value at some point, even if
 you have to set a timeout. Call cache with a value that might indicate
 an error condition and deal with it in the callback. 
 
-TODO: add a function cache.cancel(key) that triggers the callbacks but
+* TODO: add a function cache.cancel(key) that triggers the callbacks but
 with undefined value and an err param.
-TODO prevent cache(key, value) to have any effect unless there are
+* TODO prevent cache(key, value) to have any effect unless there are
 callbacks waiting for it, so you can cancel a key, deal with the error
 in the callbacks and not worry about a possible timedout async
 retrieve function by mistake still call cache(key, value)
-TODO make sure cache doesn't blow up size wise.
+* TODO make sure cache doesn't blow up size wise.

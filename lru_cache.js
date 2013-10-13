@@ -192,7 +192,9 @@ function getCache(maxLen, store, emptySlots, lookup){
         else if (typeof keys === 'string') keys = [keys]; 
         keys.forEach(function(k) {
             var val = elide(k);
-            delete val.value;
+            delete val.val;
+            
+            val._deleted = true;
             
         });
     }
@@ -304,27 +306,30 @@ function getCache(maxLen, store, emptySlots, lookup){
         // or:
         if (!length) return;
         var val = store[lru.next];
-        delete val.value;
+        delete val.val;
         elide(val.key);
     }
     
     //same as delLru except it returns a special data structure used
     //by setMru again, don't call this on an empty cache:
     function cutLru() {
-        var value = store[lru.next];
-        bridge(lru.next, value);
-        delete value.value;
-        return { index: lru.next, value: value };
+        var index = lru.next;
+        var value = store[index];
+        bridge(index, value);
+        length--;
+        return { index: index, value: value };
     }
     
     //splice data.value into the mru pos:
     function setMru(data) {
         var value = data.value;
         var index = data.index;
+        delete value.val;
         value.next = mruIndex;
         value.prev = mru.prev;
         mru.prev = index;
         store[value.prev].next = index;
+        length++;
     }
     
     init();

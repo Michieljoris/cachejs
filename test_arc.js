@@ -11,7 +11,7 @@ test(getArcCache);
 function test(getCache) {
     
     var store = [], emptySlots = [];
-    var maxLen = 20; //should be even
+    var maxLen = 10; //should be even
 
 
     //async cache:
@@ -38,10 +38,28 @@ function test(getCache) {
         console.log('received value for b:', val);
         assert(a, 'b,a', 2);
     });
+    console.log(a.debug());
     a.cache('b', 'b'); 
 
-    console.log(a.list());
-
+    console.log(a.debug());
+    
+    a.cache('b', function(val) {
+        console.log('received value for b:', val);
+        assert(a, 'b,a', 2);
+    });
+    
+    a.cache('c','c');
+    a.cache('d','d');
+    a.cache('e','e');
+    
+    a.cache('c', function(val) {console.log('received value for c:', val);});
+    a.cache('d', function(val) {console.log('received value for d:', val);});
+    a.cache('e', function(val) {console.log('received value for e:', val);});
+    a.cache('f', function(val) {console.log('received value for f:', val);});
+    a.cache('f','f');
+    a.cache('f', function(val) {console.log('received value for f:', val);});
+    
+    console.log(a.debug());
     
 
 
@@ -51,7 +69,7 @@ function test(getCache) {
         // console.log(lookup);
         // console.log(cache);
             var result = [];
-        var prev = list.mru();
+            var prev = list.mru();
         // if (!length) return [];
         var i=0;
         while (i < list.length()) {
@@ -70,7 +88,7 @@ function test(getCache) {
         // console.log('mru', mru);
         // console.log(lookup);
         // console.log(cache);
-        var result = [];
+            var result = [];
         var next = list.lru();
         // if (!length) return [];
         var i=0;
