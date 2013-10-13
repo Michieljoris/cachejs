@@ -1,38 +1,65 @@
+/*global require:false*/
+/*jshint strict:false unused:true smarttabs:true eqeqeq:true immed: true undef:true*/
+/*jshint maxparams:7 maxcomplexity:8 maxlen:150 devel:true newcap:false*/ 
+
 var getCache = require('./lru_cache_multiple');
 // var getCache = require('./lru_cache');
 
-var cache = [], emptySlots = [], lookup = {};
+var store = [], emptySlots = [], lookup = {};
 var maxLen = 20; //should be even
-var t = getCache(maxLen/2, 10, cache, emptySlots, lookup, 0);
-var b = getCache(maxLen/2, 10, cache, emptySlots, lookup, 1);
+var t = getCache(maxLen/2, store, emptySlots, lookup);
+var b = getCache(maxLen/2, store, emptySlots, lookup);
 
 var failed = 0;
 var count = 0;
 
+//async cache:
+var a = getCache(maxLen/2, store, emptySlots, lookup);
+
+a.cache('a', function(val) {
+    console.log('received value first:', val);
+    assert(a, 'a', 1);
+});
+
+a.cache('a', function(val) {
+    console.log('received value second:', val);
+    assert(a, 'a', 1);
+});
+a.cache('a', 'a'); 
+
+a.cache('a', function(val) {
+    console.log('received value third:', val);
+    assert(a, 'a', 1);
+});
+
+a.cache('b', function(val) {
+    console.log('received value for b:', val);
+    assert(a, 'b,a', 2);
+});
+
+a.cache('b', 'b'); 
+
+assert(a, 'b,a', 2);
+
+//sync cache:
 t.put('ta','ta'); assert(t, 'ta',1);
-// console.log(cache);
-// links();
 b.put('ba','ba'); assert(b, 'ba',1);
-// t.link(b.mru());assert(b, 'ba',1);
 
 t.put('tb','tb'); assert(t, 'tb,ta',2);
-// listdown();
 b.put('bb','bb'); assert(b, 'bb,ba',2);
 
 t.put('tc','tc'); assert(t, 'tc,tb,ta',3);
 b.put('bc','bc'); assert(b, 'bc,bb,ba',3);
-// listdown();
-t.get('ta');
+
+t.get('ta'); assert(t, 'ta,tc,tb', 3);
+b.get('ba'); assert(b, 'ba,bc,bb', 3);
+
 listdown(t);
 listdown(b);
-listup(t);
-listup(b);
-t.get('tc');
-b.get('ba');
 
 testSingle();
 function testSingle() {
-    var c = getCache(5, 10, [], [], {}, 0);
+    var c = getCache(5, [], [], {});
     
     c.put('a', 'a'); assert(c,'a',1);
     c.get('a'); assert(c,'a',1);
@@ -88,7 +115,7 @@ function listdown(list){
     var i=0;
     while (i < list.length()) {
         // console.log(i, t.length(), b.length());
-        var entry = cache[prev];
+        var entry = store[prev];
         result.push(entry.key);
         i++;
         prev = entry.prev;
@@ -107,7 +134,7 @@ function listup(list){
     // if (!length) return [];
     var i=0;
     while (i < list.length()) {
-        var entry = cache[next];
+        var entry = store[next];
         result.push(entry.key);
         i++;
         next = entry.next;
@@ -115,11 +142,11 @@ function listup(list){
     console.log(result);
     return result;
 }
+
 function links() {
-    
     var i=0;
-    Object.keys(cache).forEach(function(c) {
-        c = cache[c];
+    Object.keys(store).forEach(function(c) {
+        c = store[c];
         console.log(i + ': ' + c.key + ' ' + (c.next !== undefined ? c.next + '<' : '|') + ' ' +
                     (c.prev !== undefined ? '>' + c.prev : '|'));
         i++;
@@ -139,15 +166,5 @@ function assert(c, str, len) {
         console.log('Failed test ' + count + '. Expecting: ' + str + ' but receiving: ' + result);
     }
 }
-
-
-
-// c.put('a', 'a'); 
-// c.put('b', 'b'); 
-// c.put('c', 'c'); 
-// console.log('list1');
-// c.list();
-// console.log('list2');
-// c.get('a'); assert('a,c,b');
 
 console.log('\nPerformed ' + count + ' tests. Failed ' + failed + '.');
