@@ -11,11 +11,11 @@ test(getArcCache);
 function test(getCache) {
     
     var store = [], emptySlots = [];
-    var maxLen = 10; //should be even
+    var maxLen = 5; 
 
 
     //async cache:
-    var a = getCache(maxLen/2, store, emptySlots);
+    var a = getCache(maxLen, store, emptySlots);
 
     a.cache('a', function(val) {
         console.log('received value first:', val);

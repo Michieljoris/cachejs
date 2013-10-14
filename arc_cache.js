@@ -59,7 +59,7 @@ function getCache(len) {
     // t1.len > p , pop t1 to b1, reduces length of t1
     // this reduces t1 till it's the size of p. After that t2 will be
     // shrunk, and b2 grown from it.
-    function replace(key) {
+    function expel(key) {
         if (t1.length() &&
             ((b2.has(key) && t1.length() === p) ||
              (t1.length() > p)))
@@ -109,7 +109,7 @@ function getCache(len) {
             //If b2.len === b1.len p will inc by 1. If b2 is twice bigger
             //than b1, it will move by 2, etc
             p = Math.min(p + Math.max(b2.length()/b1.length(), 1), c);
-            replace(key);
+            expel(key);
             //take it out of b1, which also reduce b1's size by one:
             b1.del(key);
             //add the key to t2, since we've seen it before
@@ -125,7 +125,7 @@ function getCache(len) {
             //bigger b1 is compared to b2. P will move at least by on, but
             //will be at most 0. 
             p = Math.max(p - Math.max(b1.length()/b2.length(), 1), 0);
-            replace(key);
+            expel(key);
             //take it out of b2, which also reduce b2's size by one:
             b2.del(key); 
             //add the key to t2, since we've seen it before
@@ -136,7 +136,7 @@ function getCache(len) {
         return false;
     }
     
-    function put(key, value, size) {
+    function add(key, value, size) {
         var l1Length = t1.length() + b1.length();
         //The key is not to be found in any cache: None of the operations
         //sofar, including the get would have changed the size of the
@@ -148,24 +148,30 @@ function getCache(len) {
             //between. But one of them will have to shrink since we have a
             //new value for T1.
             if (t1.length() < c) { //same as if (b1.length()>0)
-                //We can make room by deleting a key from b1.
+                //We can make room in L1 by deleting a key from b1.
                 b1.delLru(); //b1--
-                replace(key);
-            } else { //t1.length === c/2
+                expel(key);
+            } else { //t1.length === c
                 //we'll have to reduce t1 in size now
-                // t1.delLru(); //t1-- //happens anyway when t1.put is called
+                //better would be: t1.replaceLru(key, value, size); and a touch(key, value);
+                //happens anyway when t1.put is called on a full t1 cache, since its maxiumu size is c:
+                // t1.delLru(); //t1-- 
             }
         } else {
             //L1 is not full. But L2 might be and then some.
             var total = l1Length + t2.length() + b2.length();
-            if (total >= c) {
+            if (total >= c) { 
+                //at the very least now the proper caches are full, we
+                //need to do an expel to make room for a new value in
+                //cache t1.
                 if (total === c * 2) { 
-                    //cache is full, full, full. Delete a key from b2
+                    //but ghost caches are full too!  An expel would blow
+                    //the cache up, so drop an entry all together:
                     b2.delLru(); //b2--
                 }
                 //as soon as the total reaches c or is over we start popping values
-                //from t1 to b1 and t2 to b2 in replace
-                replace(key);
+                //from t1 to b1 or t2 to b2 in replace
+                expel(key);
             }
         } 
         t1.put(key, value, size); //t1++
@@ -195,7 +201,7 @@ function getCache(len) {
         //and if so add them to t2:
         if (!ghostCache(key, value, size))
             //add the value to t1 cache:
-            put(key, value, size);
+            add(key, value, size);
         
         //respond to all the requesters of this key:
         if (requesters[key]) {
