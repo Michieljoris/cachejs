@@ -7,11 +7,19 @@ Require either arc_cache or lru_cache. The latter is backwards
 compatible with the former. Actually arch_cache uses lru_cache to
 implement its lru caches.
 
-    var cache = require('path/to/arc_cache')();
+    var lru_cache = require('path/to/arc_cache')(); //or
+    var arc_cache = require('path/to/lru_cache')();
 	
-or 	
+Or do 
+
+    npm install cachejs
+    var lru_cache = require('cachejs').lru() //or
+    var arc_cache = require('cachejs').arc()
 	
-    var cache = require('path/to/lru_cache')();
+Pass optional length of cache and expire in seconds.	
+
+	//128 items, expire after 10 seconds
+    var arc_cache = require('cachejs').arc(128, 10) 
 
 Before retrieving a value from disk or from a server or calculating it:
 

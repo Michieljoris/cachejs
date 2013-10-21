@@ -1,0 +1,23 @@
+{
+    "name": "cachejs",
+    "version": "0.1.3",
+    "auth": "Michiel van Oosten",
+    "email": "mail@michieljoris.net",
+    "description": "Implemantation of async LRU and ARC cache.",
+    "repository": {
+	"type": "git",
+	"url": "git://github.com/michieljoris/cachejs.git"
+    },
+    "keywords": [
+	"cache",
+	"lru",
+	"arc"
+    ],
+    "dependencies": {
+    },
+    "bugs": {
+	"url": "https://github.com/michieljoris/cachjs/issues"
+    },
+    "analyze": false,
+    "main": "./cachejs"
+}

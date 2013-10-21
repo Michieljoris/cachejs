@@ -2,7 +2,7 @@
 /*jshint strict:false unused:true smarttabs:true eqeqeq:true immed: true undef:true*/
 /*jshint maxparams:7 maxcomplexity:8 maxlen:150 devel:true newcap:false*/ 
 
-var getArcCache = require('./arc_cache');
+var getArcCache = require('./cachejs').arc;
 
 var failed = 0;
 var count = 0;
@@ -10,12 +10,30 @@ test(getArcCache);
 
 function test(getCache) {
     
-    var store = [], emptySlots = [];
     var maxLen = 5; 
 
+    //testing of expire 
+    var e = getCache(5, 2);
+    
+    e.cache('a', 1);
+    
+    setTimeout(function() {
+        e.cache('a', function(val) {
+            console.log('received not yet expired value:', val);
+        });
+    }, 1000);
+    
+    setTimeout(function() {
+        //this won't invoke the callback since the value is expired
+        e.cache('a', function(val) {
+            console.log('received value set after it expired:', val);
+        });
+        //but now it will:
+        e.cache('a', 2);
+    }, 3000);
 
     //async cache:
-    var a = getCache(maxLen, store, emptySlots);
+    var a = getCache(maxLen, 0);
 
     a.cache('a', function(val) {
         console.log('received value first:', val);

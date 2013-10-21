@@ -2,7 +2,7 @@
 /*jshint strict:false unused:true smarttabs:true eqeqeq:true immed: true undef:true*/
 /*jshint maxparams:7 maxcomplexity:8 maxlen:150 devel:true newcap:false*/ 
 
-var getLruCache = require('./lru_cache');
+var getLruCache = require('./cachejs').lru;
 
 var failed = 0;
 var count = 0;
@@ -12,9 +12,28 @@ function test(getCache) {
     var store = [], emptySlots = [], lookup = {};
     var maxLen = 20; //should be even
 
+    //cache items expire after two second
+    var e = getCache(5, 2);
+    
+    e.cache('a', 1);
+    
+    setTimeout(function() {
+        e.cache('a', function(val) {
+            console.log('received not yet expired value:', val);
+        });
+    }, 1000);
+    
+    setTimeout(function() {
+        //this won't invoke the callback since the value is expired
+        e.cache('a', function(val) {
+            console.log('received value set after it expired:', val);
+        });
+        //but now it will:
+        e.cache('a', 2);
+    }, 3000);
 
     //async cache:
-    var a = getCache(maxLen/2, store, emptySlots, lookup);
+    var a = getCache(maxLen/2, 0, store, emptySlots, lookup);
 
     a.cache('a', function(val) {
         console.log('received value first:', val);
@@ -42,8 +61,8 @@ function test(getCache) {
     assert(a, 'b,a', 2);
 
     //sync cache:
-    var t = getCache(maxLen/2, store, emptySlots, lookup);
-    var b = getCache(maxLen/2, store, emptySlots, lookup);
+    var t = getCache(maxLen/2, 0, store, emptySlots, lookup);
+    var b = getCache(maxLen/2, 0, store, emptySlots, lookup);
 
     t.put('ta','ta'); assert(t, 'ta',1);
     b.put('ba','ba'); assert(b, 'ba',1);
@@ -62,7 +81,7 @@ function test(getCache) {
 
     // testSingle();
     // function testSingle() {
-    var c = getCache(5, [], [], {});
+    var c = getCache(5, 0, [], [], {});
     
     c.put('a', 'a'); assert(c,'a',1);
     c.get('a'); assert(c,'a',1);
