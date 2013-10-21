@@ -29,9 +29,9 @@ function test(getCache) {
             console.log('received value set after it expired:', val);
         });
         //but now it will:
-        e.cache('a', 2);
+        e.cache('a', undefined);
     }, 3000);
-
+return;
     //async cache:
     var a = getCache(maxLen/2, 0, store, emptySlots, lookup);
 
