@@ -1,6 +1,6 @@
 {
     "name": "cachejs",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "auth": "Michiel van Oosten",
     "email": "mail@michieljoris.net",
     "description": "Implemantation of async LRU and ARC cache.",
