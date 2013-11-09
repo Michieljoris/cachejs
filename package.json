@@ -1,23 +1,43 @@
 {
     "name": "cachejs",
-    "version": "0.1.6",
-    "auth": "Michiel van Oosten",
-    "email": "mail@michieljoris.net",
-    "description": "Implemantation of async LRU and ARC cache.",
-    "repository": {
-	"type": "git",
-	"url": "git://github.com/michieljoris/cachejs.git"
-    },
+    "description": "Implementation of async LRU and ARC cache.",
+    "version": "0.1.0",
+    "homepage": "https://github.com/michieljoris/cachejs",
     "keywords": [
-	"cache",
-	"lru",
-	"arc"
+        "cache",
+        "lru",
+        "arc"
     ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/michieljoris/cachejs.git"
+    },
+    "author": {
+        "name": "Michiel van Oosten",
+        "email": "mail@axion5.net",
+        "url": "http://blog.axion5.net/"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://github.com/michieljoris/cachejs/blob/master/LICENSE.txt"
+        }
+    ],
+    "main": "./cachejs",
+    "engines": {
+        "node": ">= 0.6.x"
+    },
     "dependencies": {
+        "fs-extra": "*",
+        "MD5": "*",
+        "path": "*"
     },
-    "bugs": {
-	"url": "https://github.com/michieljoris/cachjs/issues"
+    "devDependencies": {
+        "fs-extra": "0.3.x",
+        "doccoh": "0.4.1"
     },
-    "analyze": false,
-    "main": "./cachejs"
+    "private": false,
+    "scripts": {
+        "dist": "node dist; node_modules/.bin/doccoh src/package.js"
+    }
 }
