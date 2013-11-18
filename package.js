@@ -10,7 +10,6 @@
 // It is the closest I can get to a self-documenting `package.json` file.
 
 
-
 // The `package.json` file always consists of one top level object, which is
 // what we export here in a [Node.js](http://nodejs.org) friendly way that
 // will allow us to build our `package.json` file. A real `package.json` file
