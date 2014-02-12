@@ -13,25 +13,27 @@ function test(getCache) {
     var maxLen = 20; //should be even
 
     //cache items expire after two second
-    var e = getCache(5, 2);
+    var e = getCache(5, 1);
     
-    e.cache('a', 1);
+    e.cache('a', 'aa');
     
     setTimeout(function() {
         e.cache('a', function(val) {
+            assert(e, 'a', 1);
             console.log('received not yet expired value:', val);
         });
-    }, 1000);
+    }, 500);
     
     setTimeout(function() {
         //this won't invoke the callback since the value is expired
         e.cache('a', function(val) {
+            assert(e, 'a', 1);
             console.log('received value set after it expired:', val);
         });
         //but now it will:
-        e.cache('a', 2);
-    }, 3000);
-return;
+        e.cache('a', 'new value');
+    }, 1200);
+    
     //async cache:
     var a = getCache(maxLen/2, 0, store, emptySlots, lookup);
 
@@ -125,9 +127,18 @@ return;
     c.delLru(); assert(c,'', 0);
     c.delLru(); assert(c,'', 0);
     // }
+
+
+    //issue #1
+    c.put('a', 'aa'); assert(c, 'a', 1);
+    c.put('b', 'ab'); assert(c, 'b,a', 2);
+    c.put('a', 'whatever'); assert(c, 'a,b',2);
     
+    setTimeout(function() {
+        c.put('a', 'whatever'); assert(c, 'a,b',2);
+    },500);
 
-
+    //helper function to inspect the cache data 
     function listdown(list){
         // console.log('lru', lru);
         // console.log('mru', mru);
@@ -179,6 +190,7 @@ return;
     }
     
 }
+
 function assert(c, str, len) {
     count++;
     if (c.length() !== len) {
@@ -192,5 +204,7 @@ function assert(c, str, len) {
     }
 }
 
-console.log('\nPerformed ' + count + ' tests. Failed ' + failed + '.');
+setTimeout(function() {
+    console.log('\nPerformed ' + count + ' tests. Failed ' + failed + '.');
+}, 2000);
     

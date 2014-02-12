@@ -180,11 +180,14 @@ So the system is persistent. Its internals are in constant flux, but
 it will not shrink to nothing, or blow up. And the key to its internal
 logic is a dynamic preferred size for proper cache one.
 
-- TODO: write tests that show the dynamic nature
-- TODO: optimize. 
+TODO
+--------
+
+* write tests that show the dynamic nature
+* optimize. 
 * use preallocated arrays
 * integrate lru and arc cache better
 * share lookup array between caches and use flags instead of separate
   hash tables to find values. Trade space for time.
-- TODO: benchmark  
+* benchmark  
 
