@@ -33,7 +33,7 @@ module.exports = {
     // [npm](http://npmjs.org) enforces the X.Y.Z semantic version 
     // scheme that is described at [http://semver.org/](http://semver.org/)
     // and we should follow this versioning for our package.
-    "version": "0.1.0",
+    "version": "0.1.7",
     // URL to the homepage for this package.
     "homepage": "https://github.com/michieljoris/cachejs",
     // An array of keywords used to describe this package to search engines,
@@ -125,6 +125,14 @@ module.exports = {
         "dist": "node dist; node_modules/.bin/doccoh src/package.js"
     }
 };
+
+
+var pjs = require('./package.json');
+var v = pjs.version;
+var s = v.split('.');
+v = [s[0],s[1],parseInt(s[2]) + 1].join('.');
+module.exports.version = v;
+console.log(module.exports);
 
 
 // Small script used to write the package.json file out from the package.js

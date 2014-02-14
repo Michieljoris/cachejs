@@ -1,7 +1,7 @@
 {
     "name": "cachejs",
     "description": "Implementation of async LRU and ARC cache.",
-    "version": "0.1.0",
+    "version": "0.1.8",
     "homepage": "https://github.com/michieljoris/cachejs",
     "keywords": [
         "cache",
@@ -27,11 +27,7 @@
     "engines": {
         "node": ">= 0.6.x"
     },
-    "dependencies": {
-        "fs-extra": "*",
-        "MD5": "*",
-        "path": "*"
-    },
+    "dependencies": {},
     "devDependencies": {
         "fs-extra": "0.3.x",
         "doccoh": "0.4.1"
