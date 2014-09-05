@@ -1,7 +1,7 @@
 {
   "name": "cachejs",
   "description": "Implementation of async LRU and ARC cache.",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "homepage": "https://github.com/michieljoris/cachejs",
   "keywords": [
     "cache",
