@@ -1,0 +1,107 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/home/michieljoris/bin/node',
+1 verbose cli   '/home/michieljoris/bin/npm',
+1 verbose cli   'publish' ]
+2 info using npm@1.4.9
+3 info using node@v0.10.28
+4 verbose node symlink /home/michieljoris/bin/node
+5 verbose publish [ '.' ]
+6 verbose cache add [ '.', null ]
+7 verbose cache add name=undefined spec="." args=[".",null]
+8 verbose parsed url { protocol: null,
+8 verbose parsed url   slashes: null,
+8 verbose parsed url   auth: null,
+8 verbose parsed url   host: null,
+8 verbose parsed url   port: null,
+8 verbose parsed url   hostname: null,
+8 verbose parsed url   hash: null,
+8 verbose parsed url   search: null,
+8 verbose parsed url   query: null,
+8 verbose parsed url   pathname: '.',
+8 verbose parsed url   path: '.',
+8 verbose parsed url   href: '.' }
+9 silly lockFile 3a52ce78- .
+10 verbose lock . /home/michieljoris/.npm/3a52ce78-.lock
+11 verbose tar pack [ '/home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz',
+11 verbose tar pack   '.' ]
+12 verbose tarball /home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+13 verbose folder .
+14 info prepublish cachejs@0.1.25
+15 silly lockFile 1f1177db-tar tar://.
+16 verbose lock tar://. /home/michieljoris/.npm/1f1177db-tar.lock
+17 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+18 verbose lock tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz /home/michieljoris/.npm/b7f86109-72835-0-9481736388988793-tmp-tgz.lock
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile 1f1177db-tar tar://.
+21 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+22 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+23 verbose tar unpack /home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+24 silly lockFile fe6bf378-joris-npm-cachejs-0-1-25-package tar:///home/michieljoris/.npm/cachejs/0.1.25/package
+25 verbose lock tar:///home/michieljoris/.npm/cachejs/0.1.25/package /home/michieljoris/.npm/fe6bf378-joris-npm-cachejs-0-1-25-package.lock
+26 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+27 verbose lock tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz /home/michieljoris/.npm/b7f86109-72835-0-9481736388988793-tmp-tgz.lock
+28 silly gunzTarPerm modes [ '755', '644' ]
+29 silly gunzTarPerm extractEntry package.json
+30 silly gunzTarPerm modified mode [ 'package.json', 488, 492 ]
+31 silly gunzTarPerm extractEntry .npmignore
+32 silly gunzTarPerm modified mode [ '.npmignore', 488, 492 ]
+33 silly gunzTarPerm extractEntry README.md
+34 silly gunzTarPerm modified mode [ 'README.md', 488, 492 ]
+35 silly gunzTarPerm extractEntry cachejs.js
+36 silly gunzTarPerm modified mode [ 'cachejs.js', 488, 492 ]
+37 silly gunzTarPerm extractEntry package.js
+38 silly gunzTarPerm modified mode [ 'package.js', 488, 492 ]
+39 silly gunzTarPerm extractEntry test_arc.js
+40 silly gunzTarPerm modified mode [ 'test_arc.js', 488, 492 ]
+41 silly gunzTarPerm extractEntry test_lru.js
+42 silly gunzTarPerm modified mode [ 'test_lru.js', 488, 492 ]
+43 silly gunzTarPerm extractEntry lib/arc_cache.js
+44 silly gunzTarPerm modified mode [ 'lib/arc_cache.js', 488, 492 ]
+45 silly gunzTarPerm extractEntry lib/lru_cache.js
+46 silly gunzTarPerm modified mode [ 'lib/lru_cache.js', 488, 492 ]
+47 silly gunzTarPerm extractEntry lib/lru_cache_array.js
+48 silly gunzTarPerm modified mode [ 'lib/lru_cache_array.js', 488, 492 ]
+49 silly gunzTarPerm extractEntry lib/lru_cache_sync.js
+50 silly gunzTarPerm modified mode [ 'lib/lru_cache_sync.js', 488, 492 ]
+51 silly lockFile fe6bf378-joris-npm-cachejs-0-1-25-package tar:///home/michieljoris/.npm/cachejs/0.1.25/package
+52 silly lockFile fe6bf378-joris-npm-cachejs-0-1-25-package tar:///home/michieljoris/.npm/cachejs/0.1.25/package
+53 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+54 silly lockFile b7f86109-72835-0-9481736388988793-tmp-tgz tar:///home/michieljoris/tmp/npm-24893-fXyb2TAy/1416881772835-0.9481736388988793/tmp.tgz
+55 silly lockFile 3a52ce78- .
+56 silly lockFile 3a52ce78- .
+57 silly publish { name: 'cachejs',
+57 silly publish   description: 'Implementation of async LRU and ARC cache.',
+57 silly publish   version: '0.1.25',
+57 silly publish   homepage: 'https://github.com/michieljoris/cachejs',
+57 silly publish   keywords: [ 'cache', 'lru', 'arc' ],
+57 silly publish   repository:
+57 silly publish    { type: 'git',
+57 silly publish      url: 'https://github.com/michieljoris/cachejs.git' },
+57 silly publish   author:
+57 silly publish    { name: 'Michiel van Oosten',
+57 silly publish      email: 'mail@axion5.net',
+57 silly publish      url: 'http://blog.axion5.net/' },
+57 silly publish   licenses:
+57 silly publish    [ { type: 'MIT',
+57 silly publish        url: 'http://github.com/michieljoris/cachejs/blob/master/LICENSE.txt' } ],
+57 silly publish   main: './cachejs',
+57 silly publish   engines: { node: '>= 0.6.x' },
+57 silly publish   dependencies: {},
+57 silly publish   devDependencies: { 'fs-extra': '0.3.x', doccoh: '0.4.1' },
+57 silly publish   private: false,
+57 silly publish   scripts: { dist: 'node dist; node_modules/.bin/doccoh src/package.js' },
+57 silly publish   readme: 'Cachejs\n__________\n\nImplementation of both LRU and ARC cache.\n\nRequire either arc_cache or lru_cache. The latter is backwards\ncompatible with the former. Actually arch_cache uses lru_cache to\nimplement its lru caches.\n\n    var lru_cache = require(\'path/to/arc_cache\')(); //or\n    var arc_cache = require(\'path/to/lru_cache\')();\n\t\nOr do \n\n    npm install cachejs\n    var lru_cache = require(\'cachejs\').lru() //or\n    var arc_cache = require(\'cachejs\').arc()\n\t\nPass optional length of cache and expire in seconds.\t\n\n\t//128 items, expire after 10 seconds\n    var arc_cache = require(\'cachejs\').arc(128, 10) \n\nBefore retrieving a value from disk or from a server or calculating it:\n\n\tvar key = \'mykey\'; //or an url or UUID or any other string.\n    var success = cache(key, function(value) {\n\t   //process value, eg sending it to a client\n    });\n\t\n\t//then:\n\tif (!success) retrieve(key, function(value) {\n\t\tcache(key, value);\n    });\n\t\n\t//or:\n\tif (!success) { cache(key, calculateValue(key)); }\n\nAny following requests for the same value will immediately result in\nthe callback being called. If it takes a while to create the value,\nand there are requests coming in for the same value \'cache\' will only\nreturn false for the first request. For any subsequent requests the\ncallback is stored till \'cache\' is called with the key and value. All\ncallbacks are then called.\n\nIf creating a value takes a while or there are a lot of requests\ncoming in the callbacks will keep piling up. To prevent that either\nmake sure to always call cache with the value at some point, even if\nyou have to set a timeout. Call cache with a value that might indicate\nan error condition and deal with it in the callback. \n\n* TODO: add a function cache.cancel(key) that triggers the callbacks but\nwith undefined value and an err param.\n* TODO prevent cache(key, value) to have any effect unless there are\ncallbacks waiting for it, so you can cancel a key, deal with the error\nin the callbacks and not worry about a possible timedout async\nretrieve function by mistake still call cache(key, value)\n* TODO make sure cache doesn\'t blow up size wise.\n\nArc algorithm:\n\nPaper:\n\n* http://domino.research.ibm.com/library/cyberdig.nsf/papers/D6FE9A14C67AB32E85256CE500621A9A/$File/rj10284.pdf\n  \nWikipedia:\n\n* http://en.wikipedia.org/wiki/Adaptive_Replacement_Cache\n\nOverview with slides:\n\n* http://u.cs.biu.ac.il/~wiseman/2os/2os/os2.pdf\n\nArticles:\n\n* http://dbs.uni-leipzig.de/file/ARC.pdf\n* https://www.dropbox.com/sh/9ii9sc7spcgzrth/VcpfMCYyWF/Papers/arcfast.pdf\n\nC implementation:\n\n* https://www.dropbox.com/sh/9ii9sc7spcgzrth/Zf2HHzyXFS/Papers/oneup.pdf\n  \nJavascript implementation:\n\n* https://gist.github.com/kriskowal/4409155\n\nPython implementation:\n\n* http://code.activestate.com/recipes/576532/\n\nMy version is adapted from the javascript and python versions, which\nboth seem to have been adapted from the original c version.\n\nIntuition:\n-------------\n\nThe idea is that the cache is split in two. One to hold values for\nrecent requests, the other for values for requests that seemed to have\nbeen popular (requested more than once)in the recent past, both\nordered by least recently used.\n\nIf you only had new, before unseen requests, arc would function as a\nordinary lru cache. That is, just holding on to the last number of\nvalues, hoping one of them would be requested again before having to\ndiscard it. By necessity not much of an improvement.\n\nIf however one of the values is requested again before being\ndiscarded, the second cache kicks in. The value gets moved from the\nfirst to the second. It stores now the only value requested twice so\nfar. The cache as a whole still stores the same (max) amount of\nvalues. But it will discard them in a different order now.\n\nIf a once again a before unseen new value now comes in to be stored,\nit will have to go into the first cache again. However, to make room\nthe algorithm has to make a choice about from which cache to expel\nthe least recently added.\n\nIt does this on the basis of a preferred size for the first cache. If\nits actual size is over the target size it will expel its lru,\notherwise it will it expel the lru of the second cache. So one way or\nthe other the total cache will stay the same size.\n\nThe clever bit is where these values get expelled to. They don\'t get\ndiscarded but put in their respective ghost caches. Values are looked\nup by some kind of key. In a ghost cache only the key is held on to,\nthe value itself is discarded. So the algorithm will be able to find\nthe key still, at least for a while after the value is expelled from\nthe proper cache, but will not be able to return the value from its\nown caches.\n\nBut it can use these hits on the ghost caches to make a more informed\ndecision about which of the two proper caches seems more important. On\nevery one of these hits it will increase the preferred size of the\ncache whose ghost cache was hit. The amount by which this preferred\nsize gets incremented or decremented depends on the ratio between the\ntwo ghost caches, which of course is also a fluent thing. So this is a\nself tuning system. \n\nThe more ghost cache one gets hit, the bigger the preferred size\ngets. The bigger the preferred size is, the less likely it is that\nvalues will be expelled from it, instead they will be taken from cache\n2 and go into ghost cache 2. Eventually to make room for new values\nghost cache 1 will start to be emptied out. So you will end up with a\nfull first proper cache and a full second ghost cache.\n\nIf from now on only the second ghost cache gets hit, the reverse\nhappens. The preferred size for cache one will reduce. This means that\nwhen it is expel time (before adding a new value to a proper cache),\ncache one will be the one to have its lru value expelled. This will\ncontinue till they are all expelled, ghost cache one is full, and all\nvalue from ghost cache two have been added to proper cache two again. \n\nThe goal is to have an optimum and self adapting preferred size of\ncache one, depending on the hit rate of the ghost caches.\n\nIt\'s possible to grasp the algorithm somewhat by mentally following\nthrough the logic using edge cases, such as only new values, or only\nrepeated values, or only ghost cache hits etc. \n\nYou can see that if any of the caches are hit, the total size of all\ncaches together doesn\'t change, but their relative sizes to each other\ndoes change. Also how their relative sizes change is dependent on\nwhich cache gets hit and what their relative sizes are at that moment.\n\nYou can see that with a fixed preferred size for proper cache one and\na primed total cache, the system will gradually decrease an oversized\ncache one to its preferred size when either of the ghost caches are\nhit, and fill up an undersized cache one and decrease cache two when a\nnew value comes in. So if you dynamically adjust the preferred size\nthe system will also dynamically change it internal composition.\n\nThe only change to the total size of all 4 caches can happen when the\ntotal is less than twice the desired size of the size of cache one and\ntwo together. Once the maximum size is reached it will stay at this\nsize. However depending on the situation, either ghost cache one,\nghost cache two, or proper cache one will have to give up its lru to\nmake room for a value that\'s not in any cache yet.\n\nSo the system is persistent. Its internals are in constant flux, but\nit will not shrink to nothing, or blow up. And the key to its internal\nlogic is a dynamic preferred size for proper cache one.\n\nTODO\n--------\n\n* write tests that show the dynamic nature\n* optimize. \n* use preallocated arrays\n* integrate lru and arc cache better\n* share lookup array between caches and use flags instead of separate\n  hash tables to find values. Trade space for time.\n* benchmark  \n',
+57 silly publish   readmeFilename: 'README.md',
+57 silly publish   bugs: { url: 'https://github.com/michieljoris/cachejs/issues' },
+57 silly publish   _id: 'cachejs@0.1.25',
+57 silly publish   _shasum: '4c16b3719a2cb17526fc99a0e8b4c0757ad98653',
+57 silly publish   _from: '.' }
+58 error need auth auth and email required for publishing
+58 error need auth You need to authorize this machine using `npm adduser`
+59 error System Linux 3.13.0-32-generic
+60 error command "/home/michieljoris/bin/node" "/home/michieljoris/bin/npm" "publish"
+61 error cwd /media/michieljoris/d5099508-7d17-4aea-ac80-ac38100b9447/mysrc/javascript/cachejs
+62 error node -v v0.10.28
+63 error npm -v 1.4.9
+64 error code ENEEDAUTH
+65 verbose exit [ 1, true ]
